@@ -64,20 +64,31 @@ def meta():
     pickle.dump(meta, open("dicts/meta.p", "wb"))
 
 def user():
-    yelp_user = []
-    for line in open('dataset/yelp_academic_dataset_user.json', 'r'):
-        yelp_user.append(json.loads(line))
-    
     temp = {}
-    for ele in yelp_user:
-        a = {}
-        #review_cnt yelp_age(yelp_since) friends_cnt fans elite_year_cnt avg_stars
-        a['review_cnt'] = ele['review_count']
-        a['yelp_since'] = ele['yelping_since']
-        a['friends_cnt'] = len(ele['friends'])
-        a['fans'] = ele['fans']
-        a['elite_year_cnt'] = len(ele['elite'])
-        a['avg_stars'] = ele['average_stars']
-        temp[ele['user_id']] = a
+    with open("dataset/yelp_academic_dataset_user.json", "r") as f:
+        for line in f:
+            line = json.loads(line)
+            user_id = line['user_id']
+            temp[user_id] = {}
+            temp[user_id]['review_cnt'] = line['review_count']
+            temp[user_id]['yelp_since'] = line['yelping_since']
+            temp[user_id]['friends_cnt'] = len(line['friends'])
+            temp[user_id]['fans'] = line['fans']
+            temp[user_id]['elite_year_cnt'] = len(line['elite'])
+            temp[user_id]['avg_stars'] = line['average_stars']
     pickle.dump(temp, open( "user.p", "wb" ))
 
+def store_review():
+    store_user = {}
+        with open("dataset/yelp_academic_dataset_review.json", "r") as f:
+            #with open("test_review.json", "r") as f:
+            for line in f:
+                line = json.loads(line)
+                user_id = line['user_id']
+                business_id = line['business_id']
+                value = store_user.get(business_id)
+                if value is None:
+                    store_user[business_id] = [user_id]
+                else:
+                    store_user[business_id].append(user_id)
+    pickle.dump(store_user, open( "store_user.p", "wb" ))
