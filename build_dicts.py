@@ -68,3 +68,31 @@ def meta():
     meta["city_count"] = len(meta["city_map"])
     meta["state_count"] = len(meta["state_map"])
     pickle.dump(meta, open("dicts/meta.p", "wb"))
+
+def reviews():
+    reviews = {}
+    with open("dataset/yelp_academic_dataset_review.json", "r") as f:
+        for line in f:
+            line = json.loads(line)
+            pattern = TextBlob(line['text'])
+            pol = pattern.sentiment[0]
+            sub = pattern.sentiment[1]
+
+            sentences = line['text'].split('.')
+            s1 = []
+            s2 = []
+
+            for sen in sentences:
+                if not sen:
+                    continue
+                pattern = TextBlob(sen)
+                s1.append(pattern.sentiment[0])
+                s2.append(pattern.sentiment[1])
+                pol_avg = sum(s1)/len(s1)
+                sub_avg = sum(s2)/len(s2)
+
+            tmpDict = {'user_id': line['user_id'], 'stars': line['stars'] ,'date': line['date'],
+                       'pol': pol,'sub': sub,
+                       'pol_avg': pol_avg, 'sub_avg': sub_avg}                
+            reviews[line['review_id']] = tmpDict
+    pickle.dump(reviews, open('dicts/reviews.p', 'wb'))
