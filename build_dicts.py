@@ -62,3 +62,22 @@ def meta():
     meta["city_count"] = len(meta["city_map"])
     meta["state_count"] = len(meta["state_map"])
     pickle.dump(meta, open("dicts/meta.p", "wb"))
+
+def user():
+    yelp_user = []
+    for line in open('dataset/yelp_academic_dataset_user.json', 'r'):
+        yelp_user.append(json.loads(line))
+    
+    temp = {}
+    for ele in yelp_user:
+        a = {}
+        #review_cnt yelp_age(yelp_since) friends_cnt fans elite_year_cnt avg_stars
+        a['review_cnt'] = ele['review_count']
+        a['yelp_since'] = ele['yelping_since']
+        a['friends_cnt'] = len(ele['friends'])
+        a['fans'] = ele['fans']
+        a['elite_year_cnt'] = len(ele['elite'])
+        a['avg_stars'] = ele['average_stars']
+        temp[ele['user_id']] = a
+    pickle.dump(temp, open( "user.p", "wb" ))
+
