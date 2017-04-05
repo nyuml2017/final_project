@@ -2,12 +2,7 @@ import pandas as pd
 import numpy as np
 import json
 import pickle
-'''
-user = {}
-for line in open('yelp_academic_dataset_user.json', 'r'):
-    for element in line:
-    	if element
-'''
+
 yelp_user = []
 for line in open('dataset/yelp_academic_dataset_user.json', 'r'):
     yelp_user.append(json.loads(line))
