@@ -1,6 +1,7 @@
 import pickle
 import json
 from datetime import datetime
+from geopy.distance import vincenty #should install geopy (pip install geopy)
 
 def store():
     store = {}
@@ -80,15 +81,44 @@ def user():
 
 def store_review():
     store_user = {}
-        with open("dataset/yelp_academic_dataset_review.json", "r") as f:
+    with open("dataset/yelp_academic_dataset_review.json", "r") as f:
             #with open("test_review.json", "r") as f:
-            for line in f:
-                line = json.loads(line)
-                user_id = line['user_id']
-                business_id = line['business_id']
-                value = store_user.get(business_id)
-                if value is None:
-                    store_user[business_id] = [user_id]
-                else:
-                    store_user[business_id].append(user_id)
+        for line in f:
+            line = json.loads(line)
+            user_id = line['user_id']
+            business_id = line['business_id']
+            value = store_user.get(business_id)
+            if value is None:
+                store_user[business_id] = [user_id]
+            else:
+                store_user[business_id].append(user_id)
     pickle.dump(store_user, open( "store_user.p", "wb" ))
+
+def pair_dist():
+    temp = []
+    with open("dataset/yelp_academic_dataset_business.json", "r") as f:
+            #with open("test_busi.json", "r") as f:
+        for line in f:
+            line = json.loads(line)
+            temp.append(line)
+    leng = len(temp)
+    pair_d = {}
+    for i in range(leng):
+        for j in range(i+1, leng):
+            busi_1 = temp[i]['business_id']
+            busi_2 = temp[j]['business_id']
+            x1 = temp[i]['latitude']
+            y1 = temp[i]['longitude']
+            x2 = temp[j]['latitude']
+            y2 = temp[j]['longitude']
+            first = (x1, y1)
+            second = (x2, y2)
+            if busi_1 < busi_2:
+                small = busi_1
+                large = busi_2
+            else:
+                small = busi_2
+                large = busi_1
+            tup = (small, large)
+            pair_d[tup] = vincenty(first, second).miles
+    pickle.dump(pair_d, open( "pair_dist.p", "wb"))
