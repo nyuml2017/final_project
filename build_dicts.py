@@ -40,3 +40,25 @@ def store():
     for k in store.keys():
         store[k]["stars"] /= store[k]["review_cnt"]
     pickle.dump(store, open("dicts/store.p", "wb"))
+
+def meta():
+    meta = {}
+    meta["curr_time"] = None
+    meta["city_map"] = {}
+    meta["state_map"] = {}
+    meta["state_avg_d"] = {}
+
+    with open("dataset/yelp_academic_dataset_business.json", "r") as f:
+        for line in f:
+            line = json.loads(line)
+            if line["city"] in meta["city_map"]:
+                meta["city_map"][line["city"]] += 1
+            else:
+                meta["city_map"][line["city"]] = 1
+            if line["state"] in meta["state_map"]:
+                meta["state_map"][line["state"]] += 1
+            else:
+                meta["state_map"][line["state"]] = 1
+    meta["city_count"] = len(meta["city_map"])
+    meta["state_count"] = len(meta["state_map"])
+    pickle.dump(meta, open("dicts/meta.p", "wb"))
