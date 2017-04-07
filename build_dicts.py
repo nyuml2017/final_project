@@ -1,6 +1,7 @@
 import pickle
 import json
 from datetime import datetime
+from textblob import TextBlob
 
 def store():
     store = {}
@@ -79,20 +80,22 @@ def reviews():
             sub = pattern.sentiment[1]
 
             sentences = line['text'].split('.')
-            s1 = []
-            s2 = []
+            s1 = 0
+            s2 = 0
+            valid_sen = 0
 
             for sen in sentences:
-                if not sen:
+                if not sen: # empty string
                     continue
                 pattern = TextBlob(sen)
-                s1.append(pattern.sentiment[0])
-                s2.append(pattern.sentiment[1])
-                pol_avg = sum(s1)/len(s1)
-                sub_avg = sum(s2)/len(s2)
+                s1 += pattern.sentiment[0]
+                s2 += pattern.sentiment[1]
+                valid_sen += 1
+            pol_avg = s1/valid_sen
+            sub_avg = s2/valid_sen
 
-            tmpDict = {'user_id': line['user_id'], 'stars': line['stars'] ,'date': line['date'],
-                       'pol': pol,'sub': sub,
-                       'pol_avg': pol_avg, 'sub_avg': sub_avg}                
+            tmpDict = {'user_id': line['user_id'], 'stars': line['stars'], 'date': line['date'],
+                       'pol': pol, 'sub': sub,
+                       'pol_avg': pol_avg, 'sub_avg': sub_avg}
             reviews[line['review_id']] = tmpDict
     pickle.dump(reviews, open('dicts/reviews.p', 'wb'))
