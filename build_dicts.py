@@ -79,7 +79,7 @@ def user():
             temp[user_id]['avg_stars'] = line['average_stars']
     pickle.dump(temp, open( "user.p", "wb" ))
 
-def store_review():
+def store_user():
     store_user = {}
     with open("dataset/yelp_academic_dataset_review.json", "r") as f:
             #with open("test_review.json", "r") as f:
