@@ -5,6 +5,7 @@ from geopy.distance import vincenty #should install geopy (pip install geopy)
 
 def store():
     store = {}
+    store_review = {}
     with open("dataset/yelp_academic_dataset_business.json", "r") as f:
         for line in f:
             line = json.loads(line)
@@ -38,9 +39,14 @@ def store():
             else:
                 store[business_id]["start_t"] = date
                 store[business_id]["end_t"] = date
+            if business_id in store_review:
+                store_review[business_id].append(line["review_id"])
+            else:
+                store_review[business_id] = [line["review_id"]]
     for k in store.keys():
         store[k]["stars"] /= store[k]["review_cnt"]
     pickle.dump(store, open("dicts/store.p", "wb"))
+    pickle.dump(store_review, open("dicts/store_review.p", "wb"))
 
 def meta():
     meta = {}
