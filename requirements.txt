@@ -1,3 +1,4 @@
 nltk==3.2.2
 pattern
 textblob==0.12.0
+geopy==1.11.0
