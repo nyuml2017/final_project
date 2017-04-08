@@ -3,8 +3,10 @@ from build_dicts import *
 def main():
 
     # build dicts
+    user()
     store()
-    meta()
+    pair_dist()
 
+    # meta()
 if __name__ == "__main__":
     main()
