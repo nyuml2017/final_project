@@ -45,8 +45,10 @@ def store():
                 store_review[business_id] = [line["review_id"]]
     for k in store.keys():
         store[k]["stars"] /= store[k]["review_cnt"]
-    pickle.dump(store, open("dicts/store.p", "wb"))
-    pickle.dump(store_review, open("dicts/store_review.p", "wb"))
+    with open("dicts/store.p", "wb") as f:
+        pickle.dump(store, f)
+    with open("dicts/store_review.p", "wb") as f:
+        pickle.dump(store_review, f)
 
 def meta():
     meta = {}
@@ -68,7 +70,8 @@ def meta():
                 meta["state_map"][line["state"]] = 1
     meta["city_count"] = len(meta["city_map"])
     meta["state_count"] = len(meta["state_map"])
-    pickle.dump(meta, open("dicts/meta.p", "wb"))
+    with open("dicts/meta.p", "wb") as f:
+        pickle.dump(meta, f)
 
 def reviews():
     reviews = {}
@@ -104,7 +107,13 @@ def reviews():
             i += 1
             if i%10000 == 0:
                 filename = "dicts/reviews_" + str(d) + ".p"
-                pickle.dump(reviews, open(filename, 'wb'))
+                with open(filename, 'wb') as f:
+                    pickle.dump(reviews, f)
                 reviews = {}
                 d += 1
                 i = 0
+
+user()
+store()
+# meta()
+reviews()
