@@ -72,6 +72,8 @@ def meta():
 
 def reviews():
     reviews = {}
+    i = 0
+    d = 1
     with open("dataset/yelp_academic_dataset_review.json", "r") as f:
         for line in f:
             line = json.loads(line)
@@ -91,11 +93,18 @@ def reviews():
                 s1 += pattern.sentiment[0]
                 s2 += pattern.sentiment[1]
                 valid_sen += 1
-            pol_avg = s1/valid_sen
-            sub_avg = s2/valid_sen
+            if valid_sen:
+                pol_avg = s1/valid_sen
+                sub_avg = s2/valid_sen
 
             tmpDict = {'user_id': line['user_id'], 'stars': line['stars'], 'date': line['date'],
                        'pol': pol, 'sub': sub,
                        'pol_avg': pol_avg, 'sub_avg': sub_avg}
             reviews[line['review_id']] = tmpDict
-    pickle.dump(reviews, open('dicts/reviews.p', 'wb'))
+            i += 1
+            if i%10000 == 0:
+                filename = "dicts/reviews_" + str(d) + ".p"
+                pickle.dump(reviews, open(filename, 'wb'))
+                reviews = {}
+                d += 1
+                i = 0
