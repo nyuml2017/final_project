@@ -1,7 +1,11 @@
 import pickle
 import json
 from datetime import datetime
+<<<<<<< HEAD
 from geopy.distance import vincenty #should install geopy (pip install geopy)
+=======
+from textblob import TextBlob
+>>>>>>> origin/cv
 
 def store():
     store = {}
@@ -45,8 +49,10 @@ def store():
                 store_review[business_id] = [line["review_id"]]
     for k in store.keys():
         store[k]["stars"] /= store[k]["review_cnt"]
-    pickle.dump(store, open("dicts/store.p", "wb"))
-    pickle.dump(store_review, open("dicts/store_review.p", "wb"))
+    with open("dicts/store.p", "wb") as f:
+        pickle.dump(store, f)
+    with open("dicts/store_review.p", "wb") as f:
+        pickle.dump(store_review, f)
 
 def meta():
     meta = {}
@@ -68,6 +74,7 @@ def meta():
                 meta["state_map"][line["state"]] = 1
     meta["city_count"] = len(meta["city_map"])
     meta["state_count"] = len(meta["state_map"])
+<<<<<<< HEAD
     pickle.dump(meta, open("dicts/meta.p", "wb"))
 
 def user():
@@ -128,3 +135,52 @@ def pair_dist():
             tup = (small, large)
             pair_d[tup] = vincenty(first, second).miles
     pickle.dump(pair_d, open( "pair_dist.p", "wb"))
+=======
+    with open("dicts/meta.p", "wb") as f:
+        pickle.dump(meta, f)
+
+def reviews():
+    reviews = {}
+    i = 0
+    d = 1
+    with open("dataset/yelp_academic_dataset_review.json", "r") as f:
+        for line in f:
+            line = json.loads(line)
+            pattern = TextBlob(line['text'])
+            pol = pattern.sentiment[0]
+            sub = pattern.sentiment[1]
+
+            sentences = line['text'].split('.')
+            s1 = 0
+            s2 = 0
+            valid_sen = 0
+
+            for sen in sentences:
+                if not sen: # empty string
+                    continue
+                pattern = TextBlob(sen)
+                s1 += pattern.sentiment[0]
+                s2 += pattern.sentiment[1]
+                valid_sen += 1
+            if valid_sen:
+                pol_avg = s1/valid_sen
+                sub_avg = s2/valid_sen
+
+            tmpDict = {'user_id': line['user_id'], 'stars': line['stars'], 'date': line['date'],
+                       'pol': pol, 'sub': sub,
+                       'pol_avg': pol_avg, 'sub_avg': sub_avg}
+            reviews[line['review_id']] = tmpDict
+            i += 1
+            if i%10000 == 0:
+                filename = "dicts/reviews_" + str(d) + ".p"
+                with open(filename, 'wb') as f:
+                    pickle.dump(reviews, f)
+                reviews = {}
+                d += 1
+                i = 0
+
+user()
+store()
+# meta()
+reviews()
+>>>>>>> origin/cv
