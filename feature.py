@@ -10,6 +10,7 @@ Output:
 import pickle
 import time
 import datetime
+import math
 from sentiment import *
 # dicts = ["user", "store", "reviews", "store_review", "store_user", "meta", "pair_d"]
 
@@ -42,12 +43,11 @@ def getPosNeg_score(b_id):
             neg += reviews[reivew_id]["pol"]
             neg_len += 1
 
-    if(pos == 0):
-        return 0, neg/neg_len
-    elif(neg == 0):
-        return pos/pos_len, 0
-    else:
-        return pos/pos_len, neg/neg_len
+    if pos_len:
+        pos /= pos_len
+    if neg_len:
+        neg /= neg_len
+    return pos, neg
 
 def name_size(b_id):
     return len(store[b_id]["name"].split())
