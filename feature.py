@@ -111,7 +111,7 @@ def feature(ids):
         row.append(elite_user(business_id))
 
         data_f.append(row)
-        y.append(get_shutdown_index(b_id))
+        y.append(get_shutdown_index(business_id))
 
     return data_f, y
 
