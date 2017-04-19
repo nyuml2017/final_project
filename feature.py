@@ -56,8 +56,8 @@ def name_size(b_id):
 def name_polar(b_id):
     return sentimentAnalizer(store[b_id]["name"])[0][0]
 
-def get_shutdown_index(day_of_last_review, alpha=0.0001):
-    d0 = datetime.date(day_of_last_review)
+def get_shutdown_index(alpha=0.0001):
+    d0 = datetime.date(store[b_id]["end_t"])
     #d1 = datetime.date(curr_time)
     delta = d0 - curr_time
     return 1/(math.log(delta.days)+alpha)
@@ -106,7 +106,7 @@ def feature(ids):
         row.append(city(business_id))
         row.append(state(business_id))
         row.append(stars(business_id))
-        row.append(review_count(business_id))
+        row.append(review_cnt(business_id))
         row.append(popularity(business_id))
         row.append(age(business_id))
         row.append(getPosNeg_score(business_id))
