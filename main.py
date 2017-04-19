@@ -48,6 +48,7 @@ def main():
     print "Training Error:", np.power(tr_predict - tr_ans,2).sum()
     print "Validation Error:", np.power(valid_predict - valid_ans,2).sum()
 
+<<<<<<< Updated upstream
 
 def main_sklearn():
     # Parameter settings
@@ -74,5 +75,16 @@ def main_sklearn():
     print "Training Error:", clf.score(tr_features, tr_ans)
     print "Validation Error:", clf.score(valid_features, valid_ans)
 
+=======
+<<<<<<< HEAD
+=======
+    # build dicts
+    user()
+    store()
+    pair_dist()
+>>>>>>> master
+
+    # meta()
+>>>>>>> Stashed changes
 if __name__ == "__main__":
     main_main_sklearn()
