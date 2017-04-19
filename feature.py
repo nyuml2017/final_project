@@ -51,10 +51,10 @@ def getPosNeg_score(b_id):
         return pos/pos_len, neg/neg_len
 
 def name_size(b_id):
-    return len(store[b_id][name].split())
+    return len(store[b_id]["name"].split())
 
 def name_polar(b_id):
-    return sentimentAnalizer(store[b_id][name])[0][0]
+    return sentimentAnalizer(store[b_id]["name"])[0][0]
 
 def get_shutdown_index(day_of_last_review, alpha = 0.0001):
     d0 = datetime.date(day_of_last_review)
