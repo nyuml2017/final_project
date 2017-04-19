@@ -24,7 +24,41 @@ with open("dicts/store_user.p", "r") as f:
 # with open("dicts/meta.p") as f:
     # meta = pickle.load(f)
 
-curr_time =
+curr_time = date(2014, 06, 01)
+
+def get_shutdown_index(day_of_last_review, alpha = 0.0001):  
+    d0 = date(day_of_last_review)
+    d1 = date(day_of_observation)
+    delta = d0 - d1
+    return 1/(math.log(delta).days+alpha)
+
+def category(id):
+    return store[id]["categories"]
+
+def city(id):
+    return store[id]["city"]
+
+def state(id):
+    return store[id]["state"]
+
+def stars(id):
+    return store[id]["stars"]
+
+def review_cnt(id):
+    return store[id]["review_cnt"]
+
+def popularity(id)
+    return review_cnt(id)/ age(id, curr_time)
+
+def age(id):
+    return (curr_time - store[id]["start_t"]).days
+
+def elite_user(id):
+    cnt = 0
+    for user in store_user[id]:
+        if user[user_id]['elite_year_cnt'] > 0:
+            cnt = cnt + 1
+    return cnt
 
 def feature(ids):
     # Making Features
@@ -35,12 +69,24 @@ def feature(ids):
         business_id = ids[i]
         row = []
 
+        #row.append(name_size(business_id))
+        #row.append(name_polar(business_id))
+        #row.append(name_clarity(business_id))
+        row.append(category(business_id)) 
+        row.append(city(business_id))
+        row.append(state(business_id))
+        row.append(stars(business_id))
+        row.append(review_count(business_id))
+        row.append(popularity(business_id))
+        row.append(age(business_id))
+        #pos_score
+        #neg_score
+        row.append(elite_user(business_id))
 
         data_f.append(row)
         y.append(get_shutdown_index())
 
     return data_f, y
-
 def run():
 
     # Making Features for Training
