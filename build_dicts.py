@@ -142,7 +142,6 @@ def user():
 def pair_dist():
     temp = []
     with open("dataset/yelp_academic_dataset_business.json", "r") as f:
-            #with open("test_busi.json", "r") as f:
         for line in f:
             line = json.loads(line)
             temp.append(line)
@@ -175,3 +174,4 @@ store()
 # meta()
 # reviews()
 # pair_dist()
+

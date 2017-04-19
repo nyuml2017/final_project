@@ -8,6 +8,9 @@ Output:
     y = [SI]
 """
 import pickle
+import time
+import datetime
+from sentiment import *
 
 # dicts = ["user", "store", "reviews", "store_review", "store_user", "meta", "pair_d"]
 
@@ -23,37 +26,64 @@ with open("dicts/store_user.p", "r") as f:
     store_user = pickle.load(f)
 # with open("dicts/meta.p") as f:
     # meta = pickle.load(f)
-import pickle
-from sentiment import *
+
+curr_time = date(2014, 06, 01)
 
 def getPosNeg_score(b_id):
-    with open("dicts/reviews.p", "r") as f1:
-        reviews = pickle.load(f1)
-
-    with open("dicts/store_review.p", "r") as f2:
-        store = pickle.load(f2)
-
-    pos=0
-    neg=0
-    pos_len=0
-    neg_len=0
+    pos = 0
+    neg = 0
+    pos_len = 0
+    neg_len = 0
 
     for review_id in store[b_id]:
-        if(reviews[review_id][pol]>=0):
+        if reviews[review_id][pol] >= 0:
             pos += reviews[review_id][pol]
-            pos_len +=1
+            pos_len += 1
         else:
             neg += reviews[reivew_id][pol]
-            neg_len +=1
+            neg_len += 1
 
     return pos/pos_len, neg/neg_len
 
-def getNameSizePol(b_id):
-    with open("dicts/store.p", "r") as f:
-        store = pickle.load(f)
+def name_size(b_id):
+    return len(store[b_id][name].split())
 
-    return len(store[b_id].split(" ")), sentimentAnalizer(store[b_id]][name])[0][0]
-curr_time =
+def name_polar(b_id):
+    return sentimentAnalizer(store[b_id]][name])[0][0]
+
+def get_shutdown_index(day_of_last_review, alpha = 0.0001):
+    d0 = datetime.date(day_of_last_review)
+    d1 = datetime.date(day_of_observation)
+    delta = d0 - d1
+    return 1/(math.log(delta.days)+alpha)
+
+def category(id):
+    return store[id]["categories"]
+
+def city(id):
+    return store[id]["city"]
+
+def state(id):
+    return store[id]["state"]
+
+def stars(id):
+    return store[id]["stars"]
+
+def review_cnt(id):
+    return store[id]["review_cnt"]
+
+def popularity(id):
+    return review_cnt(id)/ age(id, curr_time)
+
+def age(id):
+    return datetime.(curr_time - store[id]["start_t"]).days
+
+def elite_user(id):
+    cnt = 0
+    for user in store_user[id]:
+        if user[user_id]['elite_year_cnt'] > 0:
+            cnt = cnt + 1
+    return cnt
 
 def feature(ids):
     # Making Features
@@ -63,15 +93,28 @@ def feature(ids):
     for i in range(len(ids)):
         business_id = ids[i]
         row = []
-        row.append(getNameSizePol(business_id)[0])
-        row.append(getNameSizePol(business_id)[1])
+
         row.append(getPosNeg_score(business_id)[0])
         row.append(getPosNeg_score(business_id)[1])
+
+        row.append(name_size(business_id))
+        row.append(name_polar(business_id))
+        #row.append(name_clarity(business_id))
+        row.append(category(business_id))
+        row.append(city(business_id))
+        row.append(state(business_id))
+        row.append(stars(business_id))
+        row.append(review_count(business_id))
+        row.append(popularity(business_id))
+        row.append(age(business_id))
+        row.append(getPosNeg_score(business_id))
+        row.append(elite_user(business_id))
 
         data_f.append(row)
         y.append(get_shutdown_index())
 
     return data_f, y
+
 
 def run():
 
