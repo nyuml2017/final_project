@@ -21,8 +21,8 @@ def store():
             store[business_id]["is_open"] = line["is_open"]
             store[business_id]["categories"] = line["categories"]
 
-
-    # user = pickle.load("dicts/user.p") # load user dict to compute stars
+    with open("dicts/user.p", "r") as f: # load user dict to compute stars
+        user = pickle.load(f)
 
     with open("dataset/yelp_academic_dataset_review.json", "r") as f:
         for line in f:
@@ -30,7 +30,7 @@ def store():
             business_id = line["business_id"]
             user_id = line["user_id"]
             date = datetime.strptime(line["date"], "%Y-%m-%d")
-            # store[business_id]["stars"] += (line["stars"]-user[user_id]["avg_stars"])
+            store[business_id]["stars"] += (line["stars"]-user[user_id]["avg_stars"])
             if "start_t" in store[business_id]:
                 if date > store[business_id]["end_t"]:
                     store[business_id]["end_t"] = date
@@ -116,4 +116,4 @@ def reviews():
 user()
 store()
 # meta()
-reviews()
+# reviews()
