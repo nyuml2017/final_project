@@ -55,7 +55,7 @@ def name_size(b_id):
 def name_polar(b_id):
     return sentimentAnalizer(store[b_id]["name"])[0][0]
 
-def get_shutdown_index(alpha=0.0001):
+def get_shutdown_index(b_id, alpha=0.0001):
     #d1 = datetime.date(curr_time)
     delta = store[b_id]["end_t"] - curr_time
     return 1/(math.log(delta.days)+alpha)
@@ -111,7 +111,7 @@ def feature(ids):
         row.append(elite_user(business_id))
 
         data_f.append(row)
-        y.append(get_shutdown_index())
+        y.append(get_shutdown_index(b_id))
 
     return data_f, y
 
