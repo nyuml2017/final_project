@@ -34,7 +34,7 @@ def getPosNeg_score(b_id):
     pos_len = 0.0
     neg_len = 0.0
 
-    for review_id in store[b_id]:
+    for review_id in store_review[b_id]:
         if reviews[review_id]["pol"] >= 0:
             pos += reviews[review_id]["pol"]
             pos_len += 1
