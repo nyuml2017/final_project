@@ -36,11 +36,11 @@ def getPosNeg_score(b_id):
     neg_len = 0.0
 
     for review_id in store[b_id]:
-        if reviews[review_id][pol] >= 0:
-            pos += reviews[review_id][pol]
+        if reviews[review_id]["pol"] >= 0:
+            pos += reviews[review_id]["pol"]
             pos_len += 1
         else:
-            neg += reviews[reivew_id][pol]
+            neg += reviews[reivew_id]["pol"]
             neg_len += 1
 
     if(pos == 0):
@@ -56,7 +56,7 @@ def name_size(b_id):
 def name_polar(b_id):
     return sentimentAnalizer(store[b_id]["name"])[0][0]
 
-def get_shutdown_index(day_of_last_review, alpha = 0.0001):
+def get_shutdown_index(day_of_last_review, alpha=0.0001):
     d0 = datetime.date(day_of_last_review)
     #d1 = datetime.date(curr_time)
     delta = d0 - curr_time
