@@ -11,7 +11,6 @@ import pickle
 import time
 import datetime
 from sentiment import *
-from datetime import date
 # dicts = ["user", "store", "reviews", "store_review", "store_user", "meta", "pair_d"]
 
 with open("dicts/user.p", "r") as f:
@@ -27,7 +26,7 @@ with open("dicts/store_user.p", "r") as f:
 # with open("dicts/meta.p") as f:
     # meta = pickle.load(f)
 
-curr_time = date(2014, 06, 01)
+curr_time = datetime.datetime(2014, 06, 01)
 
 def getPosNeg_score(b_id):
     pos = 0.0
@@ -57,9 +56,8 @@ def name_polar(b_id):
     return sentimentAnalizer(store[b_id]["name"])[0][0]
 
 def get_shutdown_index(alpha=0.0001):
-    d0 = datetime.date(store[b_id]["end_t"])
     #d1 = datetime.date(curr_time)
-    delta = d0 - curr_time
+    delta = store[b_id]["end_t"] - curr_time
     return 1/(math.log(delta.days)+alpha)
 
 def category(b_id):
