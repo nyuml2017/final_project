@@ -83,7 +83,7 @@ def age(b_id):
 
 def elite_user(b_id):
     cnt = 0
-    for user in store_user[b_id]:
+    for user_id in store_user[b_id]:
         if user[user_id]['elite_year_cnt'] > 0:
             cnt = cnt + 1
     return cnt
