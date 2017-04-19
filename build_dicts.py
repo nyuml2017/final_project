@@ -2,10 +2,12 @@ import pickle
 import json
 from datetime import datetime
 from textblob import TextBlob
+from geopy.distance import vincenty
 
 def store():
     store = {}
     store_review = {}
+    store_user = {}
     with open("dataset/yelp_academic_dataset_business.json", "r") as f:
         for line in f:
             line = json.loads(line)
@@ -43,12 +45,19 @@ def store():
                 store_review[business_id].append(line["review_id"])
             else:
                 store_review[business_id] = [line["review_id"]]
+            if business_id in store_user:
+                store_user[business_id].append(user_id)
+            else:
+                store_user[business_id] = [user_id]
     for k in store.keys():
         store[k]["stars"] /= store[k]["review_cnt"]
+
     with open("dicts/store.p", "wb") as f:
         pickle.dump(store, f)
     with open("dicts/store_review.p", "wb") as f:
         pickle.dump(store_review, f)
+    with open("dicts/store_user.p", "wb") as f:
+        pickle.dump(store_user, f)
 
 def meta():
     meta = {}
@@ -70,6 +79,7 @@ def meta():
                 meta["state_map"][line["state"]] = 1
     meta["city_count"] = len(meta["city_map"])
     meta["state_count"] = len(meta["state_map"])
+
     with open("dicts/meta.p", "wb") as f:
         pickle.dump(meta, f)
 
@@ -113,7 +123,53 @@ def reviews():
                 d += 1
                 i = 0
 
+def user():
+    temp = {}
+    with open("dataset/yelp_academic_dataset_user.json", "r") as f:
+        for line in f:
+            line = json.loads(line)
+            user_id = line['user_id']
+            temp[user_id] = {}
+            temp[user_id]['review_cnt'] = line['review_count']
+            temp[user_id]['yelp_since'] = line['yelping_since']
+            temp[user_id]['friends_cnt'] = len(line['friends'])
+            temp[user_id]['fans'] = line['fans']
+            temp[user_id]['elite_year_cnt'] = len(line['elite'])
+            temp[user_id]['avg_stars'] = line['average_stars']
+    pickle.dump(temp, open("dicts/user.p", "wb"))
+
+def pair_dist():
+    temp = []
+    with open("dataset/yelp_academic_dataset_business.json", "r") as f:
+            #with open("test_busi.json", "r") as f:
+        for line in f:
+            line = json.loads(line)
+            temp.append(line)
+    leng = len(temp)
+    pair_d = {}
+    for i in range(leng):
+        for j in range(i+1, leng):
+            busi_1 = temp[i]['business_id']
+            busi_2 = temp[j]['business_id']
+            x1 = temp[i]['latitude']
+            y1 = temp[i]['longitude']
+            x2 = temp[j]['latitude']
+            y2 = temp[j]['longitude']
+            first = (x1, y1)
+            second = (x2, y2)
+            if busi_1 < busi_2:
+                small = busi_1
+                large = busi_2
+            else:
+                small = busi_2
+                large = busi_1
+            tup = (small, large)
+            pair_d[tup] = vincenty(first, second).miles
+    pickle.dump(pair_d, open("dicts/pair_dist.p", "wb"))
+
+
 user()
 store()
 # meta()
 # reviews()
+# pair_dist()
