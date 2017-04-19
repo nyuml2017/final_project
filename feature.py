@@ -11,7 +11,7 @@ import pickle
 import time
 import datetime
 from sentiment import *
-
+from datetime import date
 # dicts = ["user", "store", "reviews", "store_review", "store_user", "meta", "pair_d"]
 
 with open("dicts/user.p", "r") as f:
@@ -58,8 +58,8 @@ def name_polar(b_id):
 
 def get_shutdown_index(day_of_last_review, alpha = 0.0001):
     d0 = datetime.date(day_of_last_review)
-    d1 = datetime.date(curr_time)
-    delta = d0 - d1
+    #d1 = datetime.date(curr_time)
+    delta = d0 - curr_time
     return 1/(math.log(delta.days)+alpha)
 
 def category(b_id):
@@ -81,7 +81,7 @@ def popularity(b_id):
     return age(b_id, curr_time)/review_cnt(b_id)
 
 def age(b_id):
-    return datetime.(curr_time - store[b_id]["start_t"]).days
+    return (curr_time - store[b_id]["start_t"]).days
 
 def elite_user(b_id):
     cnt = 0
