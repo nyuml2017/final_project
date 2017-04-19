@@ -19,5 +19,7 @@ def cut_file():
     with open("data_id/valid.p", "wb") as f:
         pickle.dump(valid_ids, f)
 
+
+
 cut_file()
 

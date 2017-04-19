@@ -40,7 +40,7 @@ def getPosNeg_score(b_id):
             pos += reviews[review_id]["pol"]
             pos_len += 1
         else:
-            neg += reviews[reivew_id]["pol"]
+            neg += reviews[review_id]["pol"]
             neg_len += 1
 
     if pos_len:
@@ -56,12 +56,8 @@ def name_polar(b_id):
     return sentimentAnalizer(store[b_id]["name"])[0][0]
 
 def get_shutdown_index(b_id, alpha=0.0001):
-    #d1 = datetime.date(curr_time)
     delta = store[b_id]["end_t"] - curr_time
-    days = delta.days
-    if days:
-        days = math.log(days)
-    return 1 / (days + alpha)
+    return delta.days
 
 def category(b_id):
     return store[b_id]["categories"]
@@ -95,11 +91,12 @@ def feature(ids):
     # Making Features
     data_f = []
     y = []
-
     for i in range(len(ids)):
         business_id = ids[i]
         row = []
-
+        if business_id not in store_review:
+            print business_id
+            continue
         row.append(name_size(business_id))
         row.append(name_polar(business_id))
         #row.append(name_clarity(business_id))
