@@ -8,6 +8,8 @@ Output:
     y = [SI]
 """
 import pickle
+import time
+import datetime
 
 # dicts = ["user", "store", "reviews", "store_review", "store_user", "meta", "pair_d"]
 
@@ -27,8 +29,8 @@ with open("dicts/store_user.p", "r") as f:
 curr_time = date(2014, 06, 01)
 
 def get_shutdown_index(day_of_last_review, alpha = 0.0001):  
-    d0 = date(day_of_last_review)
-    d1 = date(day_of_observation)
+    d0 = datetime.date(day_of_last_review)
+    d1 = datetime.date(day_of_observation)
     delta = d0 - d1
     return 1/(math.log(delta).days+alpha)
 
@@ -51,7 +53,7 @@ def popularity(id)
     return review_cnt(id)/ age(id, curr_time)
 
 def age(id):
-    return (curr_time - store[id]["start_t"]).days
+    return datetime.(curr_time - store[id]["start_t"]).days
 
 def elite_user(id):
     cnt = 0
