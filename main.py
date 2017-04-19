@@ -74,4 +74,4 @@ def main_sklearn():
     print "Validation Error:", clf.score(valid_features, valid_ans)
 
 if __name__ == "__main__":
-    main_main_sklearn()
+    main_sklearn()
