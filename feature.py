@@ -30,10 +30,10 @@ with open("dicts/store_user.p", "r") as f:
 curr_time = date(2014, 06, 01)
 
 def getPosNeg_score(b_id):
-    pos = 0
-    neg = 0
-    pos_len = 0
-    neg_len = 0
+    pos = 0.0
+    neg = 0.0
+    pos_len = 0.0
+    neg_len = 0.0
 
     for review_id in store[b_id]:
         if reviews[review_id][pol] >= 0:
@@ -43,7 +43,12 @@ def getPosNeg_score(b_id):
             neg += reviews[reivew_id][pol]
             neg_len += 1
 
-    return pos/pos_len, neg/neg_len
+    if(pos == 0):
+        return 0, neg/neg_len
+    elif(neg == 0):
+        return pos/pos_len, 0
+    else:
+        return pos/pos_len, neg/neg_len
 
 def name_size(b_id):
     return len(store[b_id][name].split())
