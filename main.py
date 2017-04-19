@@ -15,9 +15,9 @@ def main():
     cv(K)
     for k in range(1, K+1):
         print k, "-fold"
-        with open("data/train_" + str(k) + ".p", "w") as f:
+        with open("data/train_" + str(k) + ".p", "r") as f:
             tr_features, tr_ans = pickle.load(f)
-        with open("data/test_" + str(k) + ".p", "w") as f:
+        with open("data/test_" + str(k) + ".p", "r") as f:
             te_features, te_ans = pickle.load(f)
 
         # Train
@@ -34,9 +34,9 @@ def main():
     print "Testing Error:", test_err/K
 
     # Build Model (with whole data)
-    with open("data/train_f.p", "w") as f:
+    with open("data/train_f.p", "r") as f:
         tr_features, tr_ans = pickle.load(f)
-    with open("data/valid_f.p", "w") as f:
+    with open("data/valid_f.p", "r") as f:
         valid_features, valid_ans = pickle.load(f)
     clf = svm.SVR()
     clf.fit(tr_features, tr_ans)
@@ -55,7 +55,7 @@ def main_sklearn():
 
     print "Start training models with', K, '-fold cross validation..."
 
-    with open("data/train_f.p", "w") as f:
+    with open("data/train_f.p", "r") as f:
         tr_features, tr_ans = pickle.load(f)
 
     clf = svm.SVR()
@@ -66,7 +66,7 @@ def main_sklearn():
     print "Testing Error:", np.sum(scores)/len(scores)
 
     # Build Model (with whole data)
-    with open("data/valid_f.p", "w") as f:
+    with open("data/valid_f.p", "r") as f:
         valid_features, valid_ans = pickle.load(f)
 
     clf.fit(tr_features, tr_ans)
