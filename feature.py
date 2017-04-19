@@ -58,7 +58,10 @@ def name_polar(b_id):
 def get_shutdown_index(b_id, alpha=0.0001):
     #d1 = datetime.date(curr_time)
     delta = store[b_id]["end_t"] - curr_time
-    return 1/(math.log(delta.days)+alpha)
+    days = delta.days
+    if days:
+        days = math.log(days)
+    return 1 / (days + alpha)
 
 def category(b_id):
     return store[b_id]["categories"]

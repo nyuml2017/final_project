@@ -4,6 +4,8 @@ from datetime import datetime
 from textblob import TextBlob
 from geopy.distance import vincenty
 
+curr_time = datetime(2014, 06, 01)
+
 def store():
     store = {}
     store_review = {}
@@ -58,6 +60,25 @@ def store():
         pickle.dump(store_review, f)
     with open("dicts/store_user.p", "wb") as f:
         pickle.dump(store_user, f)
+
+def store_review():
+    with open("dicts/store.p", "r") as f:
+        store = pickle.load(f)
+    store_review = {}
+    with open("dataset/yelp_academic_dataset_review.json", "r") as f:
+        for line in f:
+            line = json.loads(line)
+            business_id = line["business_id"]
+            review_id = line["review_id"]
+            date = datetime.strptime(line["date"], "%Y-%m-%d")
+            if date <= curr_time:
+                if business_id in store_review:
+                    store_review[business_id].append(review_id)
+                else:
+                    store_review[business_id] = [review_id]
+
+    with open("dicts/store_review.p", "wb") as f:
+        pickle.dump(store_review, f)
 
 def meta():
     meta = {}
@@ -169,8 +190,9 @@ def pair_dist():
         pickle.dump(temp, f)
 
 
-user()
-store()
+# user()
+# store()
+store_review()
 # meta()
 # reviews()
 # pair_dist()
