@@ -76,7 +76,7 @@ def review_cnt(b_id):
     return store[b_id]["review_cnt"]
 
 def popularity(b_id):
-    return age(b_id, curr_time)/review_cnt(b_id)
+    return age(b_id)/review_cnt(b_id)
 
 def age(b_id):
     return (curr_time - store[b_id]["start_t"]).days
