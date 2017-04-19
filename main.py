@@ -47,6 +47,14 @@ def main():
     print "Training Error:", np.power(tr_predict - tr_ans,2).sum()
     print "Validation Error:", np.power(valid_predict - valid_ans,2).sum()
 
+<<<<<<< HEAD
+=======
+    # build dicts
+    user()
+    store()
+    pair_dist()
+>>>>>>> master
 
+    # meta()
 if __name__ == "__main__":
     main()
