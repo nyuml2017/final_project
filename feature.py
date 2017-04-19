@@ -49,38 +49,38 @@ def name_size(b_id):
     return len(store[b_id][name].split())
 
 def name_polar(b_id):
-    return sentimentAnalizer(store[b_id]][name])[0][0]
+    return sentimentAnalizer(store[b_id][name])[0][0]
 
 def get_shutdown_index(day_of_last_review, alpha = 0.0001):
     d0 = datetime.date(day_of_last_review)
-    d1 = datetime.date(day_of_observation)
+    d1 = datetime.date(curr_time)
     delta = d0 - d1
     return 1/(math.log(delta.days)+alpha)
 
-def category(id):
-    return store[id]["categories"]
+def category(b_id):
+    return store[b_id]["categories"]
 
-def city(id):
-    return store[id]["city"]
+def city(b_id):
+    return store[b_id]["city"]
 
-def state(id):
-    return store[id]["state"]
+def state(b_id):
+    return store[b_id]["state"]
 
-def stars(id):
-    return store[id]["stars"]
+def stars(b_id):
+    return store[b_id]["stars"]
 
-def review_cnt(id):
-    return store[id]["review_cnt"]
+def review_cnt(b_id):
+    return store[b_id]["review_cnt"]
 
-def popularity(id):
-    return review_cnt(id)/ age(id, curr_time)
+def popularity(b_id):
+    return age(b_id, curr_time)/review_cnt(b_id)
 
-def age(id):
-    return datetime.(curr_time - store[id]["start_t"]).days
+def age(b_id):
+    return datetime.(curr_time - store[b_id]["start_t"]).days
 
-def elite_user(id):
+def elite_user(b_id):
     cnt = 0
-    for user in store_user[id]:
+    for user in store_user[b_id]:
         if user[user_id]['elite_year_cnt'] > 0:
             cnt = cnt + 1
     return cnt
@@ -93,9 +93,6 @@ def feature(ids):
     for i in range(len(ids)):
         business_id = ids[i]
         row = []
-
-        row.append(getPosNeg_score(business_id)[0])
-        row.append(getPosNeg_score(business_id)[1])
 
         row.append(name_size(business_id))
         row.append(name_polar(business_id))
