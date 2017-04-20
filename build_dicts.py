@@ -110,6 +110,7 @@ def reviews():
     d = 1
     with open("dataset/yelp_academic_dataset_review.json", "r") as f:
         for line in f:
+            i += 1
             line = json.loads(line)
             pattern = TextBlob(line['text'])
             pol = pattern.sentiment[0]
@@ -135,7 +136,7 @@ def reviews():
                        'pol': pol, 'sub': sub,
                        'pol_avg': pol_avg, 'sub_avg': sub_avg}
             reviews[line['review_id']] = tmpDict
-            i += 1
+
             if i%10000 == 0:
                 filename = "dicts/reviews_" + str(d) + ".p"
                 with open(filename, 'wb') as f:
@@ -143,6 +144,10 @@ def reviews():
                 reviews = {}
                 d += 1
                 i = 0
+    filename = "dicts/reviews_" + str(d) + ".p"
+    with open(filename, 'wb') as f:
+        pickle.dump(reviews, f)
+
 
 def user():
     temp = {}
@@ -192,8 +197,8 @@ def pair_dist():
 
 # user()
 # store()
-store_review()
+# store_review()
 # meta()
-# reviews()
+reviews()
 # pair_dist()
 

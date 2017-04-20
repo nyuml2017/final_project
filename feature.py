@@ -18,8 +18,14 @@ with open("dicts/user.p", "r") as f:
     user = pickle.load(f)
 with open("dicts/store.p", "r") as f:
     store = pickle.load(f)
-with open("dicts/reviews.p", "r") as f:
-    reviews = pickle.load(f)
+# with open("dicts/reviews.p", "r") as f:
+    # reviews = pickle.load(f)
+N_REVIEW_FILES = 416
+reviews = {}
+for i in range(1,N+1):
+    with open("dicts/reviews_" + str(i) + ".p", "r") as f:
+        tmp = pickle.load(f)
+    reviews.update(tmp)
 with open("dicts/store_review.p", "r") as f:
     store_review = pickle.load(f)
 with open("dicts/store_user.p", "r") as f:
