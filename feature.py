@@ -34,6 +34,8 @@ with open("dicts/store_user.p", "r") as f:
 # with open("dicts/meta.p") as f:
     # meta = pickle.load(f)
 
+#word2vec model
+model = gensim.models.KeyedVectors.load_word2vec_format('word2vec/GoogleNews-vectors-negative300.bin', binary=True) 
 curr_time = datetime.datetime(2014, 06, 01)
 
 def getPosNeg_score(b_id):
