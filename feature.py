@@ -4,7 +4,7 @@ Input:
 
 Output:
     data/train_f.p and data/valid_f.p which are pairs in format (a list of features, ans)
-    X = [name_size, name_polar, name_clarity, category, city, state, stars, review_count, popularity, age, pos_score, neg_score, elite_user]
+    X = [name_size, name_polar, name_clarity, category, city, state, stars, review_count, popularity, pos_score, neg_score, elite_user]
     y = [SI]
 """
 import pickle
@@ -83,15 +83,12 @@ def review_cnt(b_id):
 def popularity(b_id):
     return age(b_id)/review_cnt(b_id)
 
-def age(b_id):
-    return (curr_time - store[b_id]["start_t"]).days
-
 def elite_user(b_id):
     cnt = 0
     for user_id in store_user[b_id]:
         if user[user_id]['elite_year_cnt'] > 0:
             cnt = cnt + 1
-    return cnt
+    return cnts
 
 def feature(ids):
     # Making Features
@@ -112,7 +109,6 @@ def feature(ids):
         row.append(stars(business_id))
         row.append(review_cnt(business_id))
         row.append(popularity(business_id))
-        row.append(age(business_id))
         row.append(getPosNeg_score(business_id))
         row.append(elite_user(business_id))
 
