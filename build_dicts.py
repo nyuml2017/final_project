@@ -1,5 +1,6 @@
 import pickle
 import json
+import time
 from datetime import datetime
 from textblob import TextBlob
 from geopy.distance import vincenty
@@ -87,20 +88,26 @@ def store_pair():
     ob_max = 0
     ob_min = 999999
     for business_id_1 in store:
+        t1 = time.time()
         store_pair[business_id_1] = []
         for business_id_2 in store:
             if business_id_2 == business_id_1:
                 continue
-            if store[business_id_2]["start_t"] <= store[business_id_1]["end_t"]:
-                 store_pair[business_id_1].append(business_id_2)
+            if store[business_id_2]["start_t"] < store[business_id_1]["end_t"] and store[business_id_2]["end_t"] > store[business_id_1]["start_t"]:
+                store_pair[business_id_1].append(business_id_2)
+        t2 = time.time()
+        print t2-t1
         len_pair = len(store_pair[business_id_1])
+        # print len_pair
         if len_pair < ob_min:
             ob_min = len_pair
         if len_pair > ob_max:
             ob_max = len_pair
-    print ob_min, ob_max
+
     with open("dicts/store_pair.p", "wb") as f:
         pickle.dump(store_pair, f)
+    print (ob_min)
+    print (ob_max)
 
 
 def store_user_review(observe_t=12):
