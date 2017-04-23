@@ -20,6 +20,7 @@ with open("dicts/store.p", "r") as f:
     store = pickle.load(f)
 # with open("dicts/reviews.p", "r") as f:
     # reviews = pickle.load(f)
+
 N_REVIEW_FILES = 416
 reviews = {}
 for i in range(1,N+1):
@@ -30,10 +31,10 @@ with open("dicts/store_review.p", "r") as f:
     store_review = pickle.load(f)
 with open("dicts/store_user.p", "r") as f:
     store_user = pickle.load(f)
+with open("dicts/store_pair.p", "r") as f:
+    store_pair = pickle.load(f)
 # with open("dicts/meta.p") as f:
     # meta = pickle.load(f)
-
-curr_time = datetime.datetime(2014, 06, 01)
 
 def getPosNeg_score(b_id):
     pos = 0.0
