@@ -11,6 +11,7 @@ import pickle
 import time
 import datetime
 import math
+import gensim
 from sentiment import *
 # dicts = ["user", "store", "reviews", "store_review", "store_user", "meta", "pair_d"]
 
@@ -61,6 +62,23 @@ def name_size(b_id):
 def name_polar(b_id):
     return sentimentAnalizer(store[b_id]["name"])[0][0]
 
+#return clarity, missing in sequence
+def Name_ClarityAndMissing(b_id):       
+    tmp_sum=0.0
+    count=0.0
+        
+    for each in store[b_id]['categories']:
+        try:
+            tmp_sum += model.similarity(each, store[b_id]['name'])
+            count+=1
+            if tmp_sum:
+                return tmp_sum/count, false
+            else:
+                return 0.5, true
+    
+        except:
+            return 0.5, true
+		
 def get_shutdown_index(b_id, alpha=0.0001):
     delta = store[b_id]["end_t"] - curr_time
     return delta.days
@@ -105,7 +123,8 @@ def feature(ids):
             continue
         row.append(name_size(business_id))
         row.append(name_polar(business_id))
-        #row.append(name_clarity(business_id))
+        row.append(Name_ClarityAndMissing(business_id)[0])
+		row.append(Name_ClarityAndMissing(business_id)[1])
         row.append(category(business_id))
         row.append(city(business_id))
         row.append(state(business_id))
