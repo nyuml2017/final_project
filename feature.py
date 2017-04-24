@@ -35,7 +35,6 @@ with open("dicts/store_pair.p", "r") as f:
 model = gensim.models.KeyedVectors.load_word2vec_format('word2vec/GoogleNews-vectors-negative300.bin', binary=True) 
 curr_time = datetime.datetime(2014, 06, 01)
 =======
-# model = gensim.models.KeyedVectors.load_word2vec_format('word2vec/GoogleNews-vectors-negative300.bin', binary=True)
 >>>>>>> refs/remotes/origin/develop
 
 def getPosNeg_score(b_id):
@@ -63,7 +62,25 @@ def name_size(b_id):
 
 def name_polar(b_id):
     return sentimentAnalizer(store[b_id]["name"])[0][0]
-
+	
+def Name_ClarityAndMissing(b_id):      
+    tmp_sum=0.0
+    count=0.0
+    
+	if not store[b_id]['categories']:
+		return 0.5, 1
+	else:		
+		for each in store[b_id]['categories']:
+			try:
+				tmp_sum += model.similarity(each, store[b_id]['name'])
+				count+=1
+			except:
+				
+		if count:
+			return tmp_sum/count, 0
+		else:
+			return 0.5, 1
+					
 def get_shutdown_index(b_id, alpha=0.0001):
     delta = store[b_id]["end_t"] - curr_time
     return delta.days
@@ -105,7 +122,7 @@ def feature(ids):
             continue
         row.append(name_size(business_id))
         row.append(name_polar(business_id))
-        # row.extend(Name_ClarityAndMissing(business_id))
+        row.extend(Name_ClarityAndMissing(business_id))
         row.append(category(business_id))
         row.append(city(business_id))
         row.append(state(business_id))
