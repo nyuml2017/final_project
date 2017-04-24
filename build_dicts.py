@@ -5,8 +5,7 @@ from datetime import datetime
 # from textblob import TextBlob
 # from geopy.distance import vincenty
 
-curr_time = datetime(2014, 06, 01)
-
+# curr_time = datetime(2014, 06, 01)
 
 def store(observe_t=12, target_t=6):
 
@@ -54,7 +53,7 @@ def store(observe_t=12, target_t=6):
                 continue
             user_id = line["user_id"]
             date = datetime.strptime(line["date"], "%Y-%m-%d")
-            if int((store[business_id]["start_t"]-date).days/30) <= observe_t:
+            if int((date-store[business_id]["start_t"]).days/30) <= observe_t:
                 store[business_id]["review_cnt"] += 1
                 store[business_id]["stars"] += (line["stars"]-user[user_id]["avg_stars"])
 
@@ -126,7 +125,7 @@ def store_user_review(observe_t=12):
             review_id = line["review_id"]
             user_id = line["user_id"]
             date = datetime.strptime(line["date"], "%Y-%m-%d")
-            if int((store[business_id]["start_t"]-date).days/30) <= observe_t:
+            if int((date-store[business_id]["start_t"]).days/30) <= observe_t:
                 if business_id in store_review:
                     store_review[business_id].append(review_id)
                 else:
@@ -281,8 +280,8 @@ def pair_dist():
 
 if __name__ == "__main__":
     # user()
-    # store()
-    store_pair()
+    store()
+    #store_pair()
     # store_user_review()
     # store_review()
     # meta()
