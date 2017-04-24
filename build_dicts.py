@@ -251,24 +251,11 @@ def user():
         pickle.dump(temp, f)
 
 
-def pair_dist():
-    temp = []
-    with open("dataset/yelp_academic_dataset_business.json", "r") as f:
-        for line in f:
-            line = json.loads(line)
-            temp.append(line)
-    leng = len(temp)
-    pair_d = {}
-    for i in range(leng):
-        for j in range(i+1, leng):
-            busi_1 = temp[i]['business_id']
-            busi_2 = temp[j]['business_id']
-            x1 = temp[i]['latitude']
-            y1 = temp[i]['longitude']
-            x2 = temp[j]['latitude']
-            y2 = temp[j]['longitude']
-            first = (x1, y1)
-            second = (x2, y2)
+def pair_dist():  
+    pair_d = {}      
+    for busi_1 in store_pair:
+        l = store_pair[b_id]
+        for busi_2 in l:
             if busi_1 < busi_2:
                 small = busi_1
                 large = busi_2
@@ -276,9 +263,20 @@ def pair_dist():
                 small = busi_2
                 large = busi_1
             tup = (small, large)
-            pair_d[tup] = vincenty(first, second).miles
+            if tup in pair_d:
+                continue
+            else:
+                x1 = store[small]['latitude']
+                y1 = store[small]['longitude']
+                x2 = store[large]['latitude']
+                y2 = store[large]['longitude']
+                first = (x1, y1)
+                second = (x2, y2)
+                pair_d[tup] = vincenty(first, second).miles
+
     with open("dicts/pair_dist.p", "wb") as f:
-        pickle.dump(temp, f)
+        pickle.dump(pair_d, f)
+
 
 
 if __name__ == "__main__":
