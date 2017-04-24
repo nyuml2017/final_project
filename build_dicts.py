@@ -7,6 +7,7 @@ from datetime import datetime
 
 # curr_time = datetime(2014, 06, 01)
 
+
 def store(observe_t=12, target_t=6):
 
     thresh_t = observe_t + target_t
@@ -87,26 +88,28 @@ def store_pair():
     ob_max = 0
     ob_min = 999999
     for business_id_1 in store:
-        t1 = time.time()
+        # t1 = time.time()
         store_pair[business_id_1] = []
         for business_id_2 in store:
             if business_id_2 == business_id_1:
                 continue
+            if store[business_id_1]["state"] != store[business_id_2]["state"]:
+                continue
             if store[business_id_2]["start_t"] < store[business_id_1]["end_t"] and store[business_id_2]["end_t"] > store[business_id_1]["start_t"]:
                 store_pair[business_id_1].append(business_id_2)
-        t2 = time.time()
-        print (t2-t1)
-        len_pair = len(store_pair[business_id_1])
+        # t2 = time.time()
+        # print (t2-t1)
+        # len_pair = len(store_pair[business_id_1])
         # print len_pair
-        if len_pair < ob_min:
-            ob_min = len_pair
-        if len_pair > ob_max:
-            ob_max = len_pair
+        # if len_pair < ob_min:
+        #     ob_min = len_pair
+        # if len_pair > ob_max:
+        #     ob_max = len_pair
 
     with open("dicts/store_pair.p", "wb") as f:
         pickle.dump(store_pair, f)
-    print (ob_min)
-    print (ob_max)
+    # print (ob_min)
+    # print (ob_max)
 
 
 def store_user_review(observe_t=12):
@@ -280,8 +283,8 @@ def pair_dist():
 
 if __name__ == "__main__":
     # user()
-    store()
-    #store_pair()
+    # store()
+    store_pair()
     # store_user_review()
     # store_review()
     # meta()
