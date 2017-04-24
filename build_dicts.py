@@ -1,57 +1,118 @@
 import pickle
 import json
+import time
 from datetime import datetime
-from textblob import TextBlob
-from geopy.distance import vincenty
+# from textblob import TextBlob
+# from geopy.distance import vincenty
 
-curr_time = datetime(2014, 06, 01)
+# curr_time = datetime(2014, 06, 01)
 
-def store():
+
+def store(observe_t=12, target_t=6):
+
+    thresh_t = observe_t + target_t
+
+    all_store = {}
     store = {}
 
-    with open("dataset/yelp_academic_dataset_business.json", "r") as f:
+    # 1. Get start_t/end_t for each store
+    with open("dataset/yelp_academic_dataset_review.json", "r") as f:
         for line in f:
             line = json.loads(line)
             business_id = line["business_id"]
-            store[business_id] = {}
-            store[business_id]["name"] = line["name"]
-            store[business_id]["city"] = line["city"]
-            store[business_id]["state"] = line["state"]
-            store[business_id]["latitude"] = line["latitude"]
-            store[business_id]["longitude"] = line["longitude"]
-            store[business_id]["stars"] = 0
-            store[business_id]["review_cnt"] = line["review_count"]
-            store[business_id]["is_open"] = line["is_open"]
-            store[business_id]["categories"] = line["categories"]
+            date = datetime.strptime(line["date"], "%Y-%m-%d")
+            if business_id not in all_store:
+                all_store[business_id] = {}
+                all_store[business_id]["start_t"] = date
+                all_store[business_id]["end_t"] = date
+            else:
+                if date > all_store[business_id]["end_t"]:
+                    all_store[business_id]["end_t"] = date
+                if date < all_store[business_id]["start_t"]:
+                    all_store[business_id]["start_t"] = date
 
-    with open("dicts/user.p", "r") as f: # load user dict to compute stars
+    # 2. Filter store with store_age < (observe_t + target_t)
+    for business_id in all_store:
+        store_age = int((all_store[business_id]["end_t"] - all_store[business_id]["start_t"]).days/30)
+        if store_age < thresh_t:
+            continue
+        store[business_id] = {}
+        store[business_id]["start_t"] = all_store[business_id]["start_t"]
+        store[business_id]["end_t"] = all_store[business_id]["end_t"]
+        store[business_id]["stars"] = 0
+        store[business_id]["review_cnt"] = 0
+
+    # 3. Get sum of stars and review_cnt for each store
+    with open("dicts/user.p", "rb") as f:  # load user dict to compute stars
         user = pickle.load(f)
 
     with open("dataset/yelp_academic_dataset_review.json", "r") as f:
         for line in f:
             line = json.loads(line)
             business_id = line["business_id"]
+            if business_id not in store:
+                continue
             user_id = line["user_id"]
             date = datetime.strptime(line["date"], "%Y-%m-%d")
-            store[business_id]["stars"] += (line["stars"]-user[user_id]["avg_stars"])
-            if "start_t" in store[business_id]:
-                if date > store[business_id]["end_t"]:
-                    store[business_id]["end_t"] = date
-                if date < store[business_id]["start_t"]:
-                    store[business_id]["start_t"] = date
-            else:
-                store[business_id]["start_t"] = date
-                store[business_id]["end_t"] = date
+            if int((date-store[business_id]["start_t"]).days/30) <= observe_t:
+                store[business_id]["review_cnt"] += 1
+                store[business_id]["stars"] += (line["stars"]-user[user_id]["avg_stars"])
 
-    for k in store.keys():
-        store[k]["stars"] /= store[k]["review_cnt"]
-        store[k]["business_age"] = int((store[k]["end_t"] - store[k]["start_t"]).days/30)
+    # 4. Complete information for each store
+    with open("dataset/yelp_academic_dataset_business.json", "r") as f:
+        for line in f:
+            line = json.loads(line)
+            business_id = line["business_id"]
+            if business_id not in store:
+                continue
+            store[business_id]["name"] = line["name"]
+            store[business_id]["city"] = line["city"]
+            store[business_id]["state"] = line["state"]
+            store[business_id]["latitude"] = line["latitude"]
+            store[business_id]["longitude"] = line["longitude"]
+            store[business_id]["stars"] /= store[business_id]["review_cnt"]
+            store[business_id]["is_open"] = line["is_open"]
+            store[business_id]["categories"] = line["categories"]
 
     with open("dicts/store.p", "wb") as f:
         pickle.dump(store, f)
+    print (len(store))
 
 
-def store_user_review(observe_t=18):
+def store_pair():
+    store_pair = {}
+
+    with open("dicts/store.p", "rb") as f:
+        store = pickle.load(f)
+
+    ob_max = 0
+    ob_min = 999999
+    for business_id_1 in store:
+        # t1 = time.time()
+        store_pair[business_id_1] = []
+        for business_id_2 in store:
+            if business_id_2 == business_id_1:
+                continue
+            if store[business_id_1]["state"] != store[business_id_2]["state"]:
+                continue
+            if store[business_id_2]["start_t"] < store[business_id_1]["end_t"] and store[business_id_2]["end_t"] > store[business_id_1]["start_t"]:
+                store_pair[business_id_1].append(business_id_2)
+        # t2 = time.time()
+        # print (t2-t1)
+        # len_pair = len(store_pair[business_id_1])
+        # print len_pair
+        # if len_pair < ob_min:
+        #     ob_min = len_pair
+        # if len_pair > ob_max:
+        #     ob_max = len_pair
+
+    with open("dicts/store_pair.p", "wb") as f:
+        pickle.dump(store_pair, f)
+    # print (ob_min)
+    # print (ob_max)
+
+
+def store_user_review(observe_t=12):
     store_user = {}
     store_review = {}
 
@@ -62,10 +123,12 @@ def store_user_review(observe_t=18):
         for line in f:
             line = json.loads(line)
             business_id = line["business_id"]
+            if business_id not in store:
+                continue
             review_id = line["review_id"]
             user_id = line["user_id"]
             date = datetime.strptime(line["date"], "%Y-%m-%d")
-            if int(store["start_t"] - date).days()/30 <= observe_t:
+            if int((date-store[business_id]["start_t"]).days/30) <= observe_t:
                 if business_id in store_review:
                     store_review[business_id].append(review_id)
                 else:
@@ -80,24 +143,25 @@ def store_user_review(observe_t=18):
     with open("dicts/store_review.p", "wb") as f:
         pickle.dump(store_review, f)
 
-def store_review():
-    with open("dicts/store.p", "r") as f:
-        store = pickle.load(f)
-    store_review = {}
-    with open("dataset/yelp_academic_dataset_review.json", "r") as f:
-        for line in f:
-            line = json.loads(line)
-            business_id = line["business_id"]
-            review_id = line["review_id"]
-            date = datetime.strptime(line["date"], "%Y-%m-%d")
-            if date <= curr_time:
-                if business_id in store_review:
-                    store_review[business_id].append(review_id)
-                else:
-                    store_review[business_id] = [review_id]
+# Filter reviews using curr_time
+# def store_review():
+#     with open("dicts/store.p", "r") as f:
+#         store = pickle.load(f)
+#     store_review = {}
+#     with open("dataset/yelp_academic_dataset_review.json", "r") as f:
+#         for line in f:
+#             line = json.loads(line)
+#             business_id = line["business_id"]
+#             review_id = line["review_id"]
+#             date = datetime.strptime(line["date"], "%Y-%m-%d")
+#             if date <= curr_time:
+#                 if business_id in store_review:
+#                     store_review[business_id].append(review_id)
+#                 else:
+#                     store_review[business_id] = [review_id]
+#     with open("dicts/store_review.p", "wb") as f:
+#         pickle.dump(store_review, f)
 
-    with open("dicts/store_review.p", "wb") as f:
-        pickle.dump(store_review, f)
 
 def meta():
     meta = {}
@@ -122,6 +186,7 @@ def meta():
 
     with open("dicts/meta.p", "wb") as f:
         pickle.dump(meta, f)
+
 
 def reviews():
     reviews = {}
@@ -185,6 +250,7 @@ def user():
     with open("dicts/user.p", "wb") as f:
         pickle.dump(temp, f)
 
+
 def pair_dist():
     temp = []
     with open("dataset/yelp_academic_dataset_business.json", "r") as f:
@@ -214,10 +280,12 @@ def pair_dist():
     with open("dicts/pair_dist.p", "wb") as f:
         pickle.dump(temp, f)
 
+
 if __name__ == "__main__":
     # user()
     # store()
-    store_user_review()
+    store_pair()
+    # store_user_review()
     # store_review()
     # meta()
     # reviews()

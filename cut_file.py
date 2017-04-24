@@ -1,13 +1,11 @@
 import pickle
 import random
-import json
+
 
 def cut_file():
-    biz_ids = []
-    with open("dataset/yelp_academic_dataset_business.json", "r") as f:
-        for line in f:
-            line = json.loads(line)
-            biz_ids.append(line["business_id"])
+    with open("dicts/store.p", "r") as f:
+        store = pickle.load(f)
+    biz_ids = store.keys()
     N = len(biz_ids)
     random.shuffle(biz_ids)
 
@@ -20,6 +18,5 @@ def cut_file():
         pickle.dump(valid_ids, f)
 
 
-
-cut_file()
-
+if __name__ == "__main__":
+    cut_file()
