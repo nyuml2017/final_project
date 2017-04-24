@@ -36,8 +36,8 @@ with open("dicts/store_pair.p", "r") as f:
     store_pair = pickle.load(f)
 # with open("dicts/meta.p") as f:
     # meta = pickle.load(f)
-	
-model = gensim.models.KeyedVectors.load_word2vec_format('word2vec/GoogleNews-vectors-negative300.bin', binary=True)  
+
+# model = gensim.models.KeyedVectors.load_word2vec_format('word2vec/GoogleNews-vectors-negative300.bin', binary=True)
 
 def getPosNeg_score(b_id):
     pos = 0.0
@@ -106,7 +106,7 @@ def feature(ids):
             continue
         row.append(name_size(business_id))
         row.append(name_polar(business_id))
-        row.extend(Name_ClarityAndMissing(business_id))
+        # row.extend(Name_ClarityAndMissing(business_id))
         row.append(category(business_id))
         row.append(city(business_id))
         row.append(state(business_id))
@@ -137,4 +137,5 @@ def run():
         pickle.dump(feature(valid_id), f)
 
 
-run()
+if __name__ == "__main__":
+    run()

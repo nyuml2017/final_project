@@ -2,8 +2,8 @@ import pickle
 import json
 import time
 from datetime import datetime
-from textblob import TextBlob
-from geopy.distance import vincenty
+# from textblob import TextBlob
+# from geopy.distance import vincenty
 
 curr_time = datetime(2014, 06, 01)
 
@@ -43,7 +43,7 @@ def store(observe_t=12, target_t=6):
         store[business_id]["review_cnt"] = 0
 
     # 3. Get sum of stars and review_cnt for each store
-    with open("dicts/user.p", "r") as f:  # load user dict to compute stars
+    with open("dicts/user.p", "rb") as f:  # load user dict to compute stars
         user = pickle.load(f)
 
     with open("dataset/yelp_academic_dataset_review.json", "r") as f:
@@ -76,7 +76,7 @@ def store(observe_t=12, target_t=6):
 
     with open("dicts/store.p", "wb") as f:
         pickle.dump(store, f)
-    print len(store)
+    print (len(store))
 
 
 def store_pair():
@@ -96,7 +96,7 @@ def store_pair():
             if store[business_id_2]["start_t"] < store[business_id_1]["end_t"] and store[business_id_2]["end_t"] > store[business_id_1]["start_t"]:
                 store_pair[business_id_1].append(business_id_2)
         t2 = time.time()
-        print t2-t1
+        print (t2-t1)
         len_pair = len(store_pair[business_id_1])
         # print len_pair
         if len_pair < ob_min:
