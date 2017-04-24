@@ -7,7 +7,7 @@ Output:
     X = [name_size, name_polar, name_clarity, category, city, state, stars, review_count, popularity, pos_score, neg_score, elite_user]
     y = [SI]
 """
-import pickle
+import cPickle as pickle
 import time
 import datetime
 import math
