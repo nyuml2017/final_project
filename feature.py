@@ -8,6 +8,7 @@ Output:
     y = [SI]
 """
 import pickle
+import utils
 import time
 import datetime
 import math
@@ -15,20 +16,13 @@ import gensim
 from sentiment import *
 # dicts = ["user", "store", "reviews", "store_review", "store_user", "meta", "pair_d"]
 
-with open("dicts/user.p", "r") as f:
-    user = pickle.load(f)
-with open("dicts/store.p", "r") as f:
-    store = pickle.load(f)
-with open("dicts/reviews.p", "r") as f:
-    reviews = pickle.load(f)
-with open("dicts/store_review.p", "r") as f:
-    store_review = pickle.load(f)
-with open("dicts/store_user.p", "r") as f:
-    store_user = pickle.load(f)
-with open("dicts/store_pair.p", "r") as f:
-    store_pair = pickle.load(f)
-# with open("dicts/meta.p") as f:
-    # meta = pickle.load(f)
+user = utils.load("dicts/user.p")
+store = utils.load("dicts/store.p")
+reviews = utils.load("dicts/reviews.p")
+store_review = utils.load("dicts/store_review.p")
+store_user = utils.load("dicts/store_user.p")
+store_pair = utils.load("dicts/store_pair.p")
+# meta = utils.load("dicts/meta.p")
 
 # model = gensim.models.KeyedVectors.load_word2vec_format('word2vec/GoogleNews-vectors-negative300.bin', binary=True)
 
@@ -118,16 +112,12 @@ def feature(ids):
 def run():
 
     # Making Features for Training
-    with open("data_id/train.p", "r") as f:
-        train_id = pickle.load(f)
-    with open("data/train_f.p", "w") as f:
-        pickle.dump(feature(train_id), f)
+    train_id = utils.load("data_id/train.p")
+    utils.dump(feature(train_id), "data/train_f.p")
 
     # Making Features for Validation
-    with open("data_id/valid.p", "r") as f:
-        valid_id = pickle.load(f)
-    with open("data/valid_f.p", "w") as f:
-        pickle.dump(feature(valid_id), f)
+    valid_id = utils.load("data_id/valid.p")
+    utils.dump(feature(valid_id), "data/valid_f.p")
 
 
 if __name__ == "__main__":
