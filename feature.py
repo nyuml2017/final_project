@@ -84,7 +84,7 @@ def elite_user(b_id, observe_t=12):
         if user[user_id]["elite"][0] == "None":
             continue
         for yr in user[user_id]["elite"]:
-            eli_date = datetime.datetime((int)yr, 1, 1)
+            eli_date = datetime.datetime(int(yr), 1, 1)
             diff = eli_date - store[b_id]["start_t"]
             if diff.days/30 < observe_t:
                 cnt = cnt + 1
@@ -102,9 +102,6 @@ def feature(ids):
         if label == -1:
             continue
         row = []
-        if business_id not in store_review:
-            print business_id
-            continue
         row.append(name_size(business_id))
         row.append(name_polar(business_id))
         # row.append(name_clarity(business_id))
@@ -127,18 +124,14 @@ def run():
     # Making Features for Training
     t1 = time.time()
     train_id = utils.load("data_id/train.p")
-    t2 = time.time()
-    print ("Making features for train:", t2-t1)
     utils.dump(feature(train_id), "data/train_f.p")
-    print ("Dump:", time.time()-t2)
+    print ("train:", time.time()-t1)
 
     # Making Features for Testing
     t1 = time.time()
     test_id = utils.load("data_id/test.p")
-    t2 = time.time()
-    print ("Making features for test:", t2-t1)
     utils.dump(feature(test_id), "data/test_f.p")
-    print ("Dump:", time.time()-t2)
+    print ("test:", time.time()-t1)
 
 
 if __name__ == "__main__":
