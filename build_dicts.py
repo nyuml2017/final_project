@@ -86,6 +86,7 @@ def store_pair():
     d = 1
     for business_id_1 in store:
         # t1 = time.time()
+        i += 1
         store_pair[business_id_1] = []
         for business_id_2 in store:
             if business_id_2 == business_id_1:
@@ -102,10 +103,10 @@ def store_pair():
         #     ob_min = len_pair
         # if len_pair > ob_max:
         #     ob_max = len_pair
-        if i%5000 == 0:
+        if i%10000 == 0:
             path = "dicts/store_pair_" + str(d) + ".p"
             utils.dump(store_pair, path)
-            reviews = {}
+            store_pair = {}
             d += 1
             i = 0
     path = "dicts/store_pair" + str(d) + ".p"
