@@ -21,7 +21,7 @@ store = utils.load("dicts/store.p")
 reviews = utils.load("dicts/reviews.p")
 store_review = utils.load("dicts/store_review.p")
 store_user = utils.load("dicts/store_user.p")
-store_pair = utils.load("dicts/store_pair.p")
+# store_pair = utils.load("dicts/store_pair.p")
 # meta = utils.load("dicts/meta.p")
 
 # model = gensim.models.KeyedVectors.load_word2vec_format('word2vec/GoogleNews-vectors-negative300.bin', binary=True)
@@ -116,8 +116,8 @@ def run():
     utils.dump(feature(train_id), "data/train_f.p")
 
     # Making Features for Validation
-    valid_id = utils.load("data_id/valid.p")
-    utils.dump(feature(valid_id), "data/valid_f.p")
+    valid_id = utils.load("data_id/test.p")
+    utils.dump(feature(valid_id), "data/test_f.p")
 
 
 if __name__ == "__main__":

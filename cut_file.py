@@ -9,10 +9,10 @@ def cut_file():
     random.shuffle(biz_ids)
 
     train_ids = biz_ids[:int(N*0.8)]
-    valid_ids = biz_ids[int(N*0.8):]
+    test_ids = biz_ids[int(N*0.8):]
 
     utils.dump(train_ids, "data_id/train.p")
-    utils.dump(valid_ids, "data_id/valid.p")
+    utils.dump(test_ids, "data_id/test.p")
 
 
 if __name__ == "__main__":
