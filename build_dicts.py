@@ -249,11 +249,13 @@ def user():
 
 def pair_dist():
 
+    store = utils.load("dicts/store.p")
     store_pair = utils.load("dicts/store_pair.p")
+
     pair_d = {}
 
     for busi_1 in store_pair:
-        l = store_pair[b_id]
+        l = store_pair[busi_1]
         for busi_2 in l:
             if busi_1 < busi_2:
                 small = busi_1
