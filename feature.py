@@ -52,9 +52,16 @@ def name_size(b_id):
 def name_polar(b_id):
     return sentimentAnalizer(store[b_id]["name"])[0][0]
 
-def get_shutdown_index(b_id, alpha=0.0001):
-    delta = store[b_id]["end_t"] - curr_time
-    return delta.days
+def get_y(b_id, observe_t = 12):
+    life_time = store[b_id]["end_t"] - store[b_id]["start_t"]
+    longer = life_time.days/30 - observe_t
+    if longer > 0:
+        return (int)store[b_id]["is_open"]
+    else:
+        if store[b_id]["is_open"] == 1:
+            return -1
+        else
+            return 0
 
 def category(b_id):
     return store[b_id]["categories"]
@@ -71,15 +78,28 @@ def stars(b_id):
 def review_cnt(b_id):
     return store[b_id]["review_cnt"]
 
-def popularity(b_id):
-    return age(b_id)/review_cnt(b_id)
+def popularity(b_id, observe_t = 12):
+    cnt = 0
+    l = store_review[b_id]
+    for r_id in l:
+        diff = (reviews[r_id]['date'] - store[b_id]["start_t"]).days
+        if diff > 0 and diff < observe_t*30:
+            cnt = cnt + 1
+    return observe_t * 30/cnt
 
-def elite_user(b_id):
+def elite_user(b_id, observe_t = 12):
     cnt = 0
     for user_id in store_user[b_id]:
-        if user[user_id]['elite_year_cnt'] > 0:
-            cnt = cnt + 1
-    return cnts
+        if user[user_id]["elite"][0] == "None":
+            continue
+        else:
+            for yr in user[user_id]["elite"]:
+                eli_date = datetime.datetime((int)yr, 1, 1)
+                diff = eli_date - store[b_id]["start_t"]
+                if diff.days/30 < observe_t:
+                    cnt = cnt + 1
+                    break
+    return cnt
 
 def feature(ids):
     # Making Features
@@ -87,24 +107,29 @@ def feature(ids):
     y = []
     for i in range(len(ids)):
         business_id = ids[i]
-        row = []
-        if business_id not in store_review:
-            print business_id
+        label = get_y(business_id, 12)
+        if label == -1:
             continue
-        row.append(name_size(business_id))
-        row.append(name_polar(business_id))
-        # row.extend(Name_ClarityAndMissing(business_id))
-        row.append(category(business_id))
-        row.append(city(business_id))
-        row.append(state(business_id))
-        row.append(stars(business_id))
-        row.append(review_cnt(business_id))
-        row.append(popularity(business_id))
-        row.append(getPosNeg_score(business_id))
-        row.append(elite_user(business_id))
+        else:
+            row = []
+            if business_id not in store_review:
+                print business_id
+                continue
+            row.append(name_size(business_id))
+            row.append(name_polar(business_id))
+        #row.append(name_clarity(business_id))
+            row.append(category(business_id))
+            row.append(city(business_id))
+            row.append(state(business_id))
+            row.append(stars(business_id))
+            row.append(review_cnt(business_id))
+            row.append(popularity(business_id))
+            row.append(age(business_id))
+            row.append(getPosNeg_score(business_id))
+            row.append(elite_user(business_id))
 
-        data_f.append(row)
-        y.append(get_shutdown_index(business_id))
+            data_f.append(row)
+            y.append(label)
 
     return data_f, y
 
